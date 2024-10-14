@@ -1,3 +1,3 @@
-module github.com/aaronjan/hunch
+module github.com/uded/hunch
 
 go 1.18

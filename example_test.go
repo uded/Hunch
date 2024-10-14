@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aaronjan/hunch"
+	"github.com/uded/hunch"
 )
 
 func ExampleAll() {
 	ctx := context.Background()
 	r, err := hunch.All(
 		ctx,
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(300 * time.Millisecond)
 			return 1, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(200 * time.Millisecond)
 			return 2, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(100 * time.Millisecond)
 			return 3, nil
 		},
@@ -37,15 +37,15 @@ func ExampleTake() {
 		ctx,
 		// Only need the first 2 values.
 		2,
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(300 * time.Millisecond)
 			return 1, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(200 * time.Millisecond)
 			return 2, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(100 * time.Millisecond)
 			return 3, nil
 		},
@@ -62,15 +62,15 @@ func ExampleLast() {
 		ctx,
 		// Only need the last 2 values.
 		2,
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(300 * time.Millisecond)
 			return 1, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(200 * time.Millisecond)
 			return 2, nil
 		},
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int64, error) {
 			time.Sleep(100 * time.Millisecond)
 			return 3, nil
 		},
@@ -85,15 +85,11 @@ func ExampleWaterfall() {
 	ctx := context.Background()
 	r, err := hunch.Waterfall(
 		ctx,
-		func(ctx context.Context, n interface{}) (interface{}, error) {
+		func(ctx context.Context, n int) (int, error) {
 			return 1, nil
 		},
-		func(ctx context.Context, n interface{}) (interface{}, error) {
-			return n.(int) + 1, nil
-		},
-		func(ctx context.Context, n interface{}) (interface{}, error) {
-			return n.(int) + 1, nil
-		},
+		func(ctx context.Context, n int) (int, error) { return n + 1, nil },
+		func(ctx context.Context, n int) (int, error) { return n + 1, nil },
 	)
 
 	fmt.Println(r, err)
@@ -116,7 +112,7 @@ func ExampleRetry() {
 	r, err := hunch.Retry(
 		ctx,
 		10,
-		func(ctx context.Context) (interface{}, error) {
+		func(ctx context.Context) (int, error) {
 			rs, err := getStuffFromAPI()
 
 			return rs, err
